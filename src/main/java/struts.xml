@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	<!-- 指定Web应用的默认编码集 -->
+	<constant name="struts.i18n.encoding" value="utf-8" />
+	<!-- 指定需要Struts 2处理的请求后缀 -->
+	<constant name="struts.action.extension" value="do,action,aspx,ext," />
+
+
+	<package name="test" namespace="/" extends="struts-default">
+		<action name="test" class="TestAction" method="test">
+		</action>
+		<action name="getShare" class="TestAction" method="getShare">
+		</action>
+		<action name="getShareCount" class="TestAction" method="getShareCount">
+		</action>
+		<action name="getScoreBuy" class="TestAction" method="getScoreBuy">
+		</action>
+		<action name="getGameEnterAndFinish" class="TestAction" method="getGameEnterAndFinish">
+		</action>
+		<action name="getCheckIn" class="TestAction" method="getCheckIn">
+		</action>
+		<action name="getCheckInCount" class="TestAction" method="getCheckInCount">
+		</action>
+		<action name="getShareOrder" class="TestAction" method="getShareOrder">
+		</action>
+		<action name="getScoreBuySum" class="TestAction" method="getScoreBuySum">
+		</action>
+		<action name="getRegNum" class="TestAction" method="getRegNum">
+		</action>
+		<action name="queryYDUser" class="TestAction" method="queryYDUser">
+		</action>
+		<action name="queryYDUserCount" class="TestAction" method="queryYDUserCount">
+		</action>
+		<action name="queryLiucun" class="TestAction" method="queryLiucun">
+		</action>
+		<action name="getPay" class="TestAction" method="getPay">
+		</action>
+		<action name="getPayManage" class="TestAction" method="getPayManage">
+		</action>
+		<action name="login" class="TestAction" method="login">
+ 		    <result name="success" type="dispatcher">/index.jsp</result>
+ 			<result name="false" type="dispatcher">/login.jsp</result>
+ 		</action>
+	</package>
+</struts>

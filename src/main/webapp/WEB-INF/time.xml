@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="regTrigger" />
+
+			</list>
+		</property>
+		<property name="autoStartup" value="true" />
+	</bean>
+
+	
+	<!-- 定时插入注册人数 -->
+	<bean id="regTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="regDetail" />
+		<property name="cronExpression" value="0 59 23 * * ?" /> <!-- 每天23:59点执行 -->
+	</bean>
+
+	<bean id="regDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="regJob" />
+		<property name="targetMethod" value="reg" />
+	</bean>
+
+	<bean id="regJob" class="util.RegJob" >
+		<property name="yiDianDao" ref="yiDianDao" />
+	</bean>
+	<!-- 定时插入注册人数 -->
+	
+	
+</beans>

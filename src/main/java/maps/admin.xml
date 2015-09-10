@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="AdminSQL">
+	<typeAlias alias="mo" type="model.Mo"/>
+	<typeAlias alias="checkIn" type="model.CheckIn"/>
+	<typeAlias alias="shareOrder" type="model.ShareOrder"/>
+	<typeAlias alias="sbs" type="model.ScoreBuySum"/>
+	<typeAlias alias="user" type="model.User"/>
+	<typeAlias alias="yduser" type="model.YDUser"/>
+	<typeAlias alias="liucun" type="model.Liucun"/>
+	
+	
+	<resultMap class="mo" id="Result1" >
+		<result column="suserid" property="userid" jdbcType="VARCHAR"  nullValue=""/>
+		<result column="susername" property="username" jdbcType="VARCHAR"  nullValue=""/>
+		<result column="nuserphone" property="userphone" jdbcType="DECIMAL"  nullValue="0"/>
+		<result column="ntype" property="type" jdbcType="DECIMAL"  nullValue="0"/>
+		<result column="snewuserid" property="newuserid" jdbcType="VARCHAR"  nullValue=""/>
+		<result column="snewusername" property="newusername" jdbcType="VARCHAR"  nullValue=""/>
+		<result column="nnewuserphone" property="newuserphone" jdbcType="DECIMAL" nullValue="0"/>
+		<result column="dtime" property="time" jdbcType="VARCHAR" nullValue=""/>
+	</resultMap>
+	
+	<resultMap class="mo" id="Result2" >
+		<result column="suserid" property="userid" jdbcType="VARCHAR"  nullValue=""/>
+		<result column="susername" property="username" jdbcType="VARCHAR"  nullValue=""/>
+		<result column="nuserphone" property="userphone" jdbcType="DECIMAL"  nullValue="0"/>
+		<result column="nallscore" property="allscore" jdbcType="DECIMAL"  nullValue="0"/>
+		<result column="nscoreitemindex" property="scoreitemindex" jdbcType="DECIMAL"  nullValue="0"/>
+		<result column="sscoreitemname" property="scoreitemname" jdbcType="VARCHAR"  nullValue=""/>
+		<result column="nscoreprice" property="scoreprice" jdbcType="DECIMAL"  nullValue="0"/>
+		<result column="dtime" property="time" jdbcType="VARCHAR" nullValue=""/>
+	</resultMap>
+	<resultMap class="checkIn" id="Result3" >
+		<result column="suserid" property="userid" jdbcType="VARCHAR"  nullValue=""/>
+		<result column="susername" property="username" jdbcType="VARCHAR"  nullValue=""/>
+		<result column="nlevel" property="level" jdbcType="DECIMAL"  nullValue="0"/>
+		<result column="nscore" property="score" jdbcType="DECIMAL"  nullValue="0"/>
+		<result column="nallscore" property="allscore" jdbcType="DECIMAL"  nullValue="0"/>
+		<result column="dtime" property="time" jdbcType="VARCHAR" nullValue=""/>
+	</resultMap>
+	<resultMap class="shareOrder" id="Result4" >
+		<result column="suserid" property="userid" jdbcType="VARCHAR"  nullValue=""/>
+		<result column="susername" property="username" jdbcType="VARCHAR"  nullValue=""/>
+		<result column="count" property="count" jdbcType="DECIMAL"  nullValue="0"/>
+
+	</resultMap>
+	
+	
+	<resultMap class="sbs" id="Result5" >
+		<result column="nscoreitemindex" property="scoreitemindex" jdbcType="DECIMAL"  nullValue="0"/>
+		<result column="sscoreitemname" property="scoreitemname" jdbcType="VARCHAR"  nullValue=""/>
+		<result column="nscoreprice" property="scoreprice" jdbcType="DECIMAL"  nullValue="0"/>
+		<result column="buysum" property="buysum" jdbcType="DECIMAL"  nullValue="0"/>
+		<result column="num" property="num" jdbcType="DECIMAL"  nullValue="0"/>
+	</resultMap>
+	<resultMap class="user" id="Result6" >
+		<result column="susername" property="userName" jdbcType="VARCHAR"  nullValue=""/>
+		<result column="spassword" property="passWord" jdbcType="VARCHAR"  nullValue=""/>
+		<result column="ngroup" property="group" jdbcType="DECIMAL"  nullValue="0"/>
+		<result column="ssid" property="sid" jdbcType="VARCHAR"  nullValue=""/>
+	</resultMap>
+	
+	<resultMap class="yduser" id="Result7" >
+		<result column="snickname" property="nick" jdbcType="VARCHAR"  nullValue=""/>
+		<result column="nusername" property="userName" jdbcType="DECIMAL"  nullValue="0"/>
+		<result column="dregisterdate" property="regTime" jdbcType="VARCHAR"  nullValue=""/>
+	</resultMap>
+	
+	<resultMap class="liucun" id="Result8" >
+		<result column="NL1" property="liucun1" jdbcType="DECIMAL"  nullValue="0"/>
+		<result column="NL3" property="liucun3" jdbcType="DECIMAL"  nullValue="0"/>
+		<result column="NL7" property="liucun7" jdbcType="DECIMAL"  nullValue="0"/>
+		<result column="NL30" property="liucun30" jdbcType="DECIMAL"  nullValue="0"/>
+	</resultMap>
+	
+	
+		<select id="getShare" parameterClass="map" resultMap="Result1">
+	<![CDATA[
+	SELECT * FROM(
+		select rownum as num,a.* from (
+		
+			select  suserid ,susername, nuserphone ,ntype ,snewuserid, snewusername ,nnewuserphone ,dtime from sharelog  where 1=1
+			]]>
+		  <isNotNull prepend="and" property="startTime"> 
+		  <![CDATA[
+           dtime > to_date(#startTime#,'mm/dd/yyyy')
+                 		]]>
+        </isNotNull> 	
+        <isNotNull prepend="and" property="endTime"> 
+        	<![CDATA[
+           dtime <=to_date(#endTime#,'mm/dd/yyyy')
+           		]]>
+        </isNotNull> 	
+        	<![CDATA[	
+			 order by DTIME desc) a ) WHERE 1=1
+		]]>
+		<isNotNull property="rowStart">
+			<![CDATA[
+			 and num between #rowStart:INTEGER# 
+			]]>
+		</isNotNull>
+		<isNotNull property="rowEnd">
+			<![CDATA[
+			 and #rowEnd:INTEGER# 
+			]]>
+		</isNotNull>
+	</select>
+	<select id="getShareCount" parameterClass="map" resultClass="int">
+	<![CDATA[
+			select  count(*) from sharelog where 1=1
+			]]>
+		  <isNotNull prepend="and" property="startTime"> 
+		  <![CDATA[
+           dtime > to_date(#startTime#,'mm/dd/yyyy')
+                 		]]>
+        </isNotNull> 	
+        <isNotNull prepend="and" property="endTime"> 
+        	<![CDATA[
+           dtime <=to_date(#endTime#,'mm/dd/yyyy')
+           		]]>
+        </isNotNull> 	
+	</select>
+	
+	
+	<select id="getShareOrder" parameterClass="map" resultMap="Result4">
+	<![CDATA[
+	
+		select t.suserid,t.susername ,count(*) as count from sharelog t where 1=1
+			]]>
+		  <isNotNull prepend="and" property="startTime"> 
+		  <![CDATA[
+           dtime > to_date(#startTime#,'mm/dd/yyyy')
+                 		]]>
+        </isNotNull> 	
+        <isNotNull prepend="and" property="endTime"> 
+        	<![CDATA[
+           dtime <=to_date(#endTime#,'mm/dd/yyyy')
+           		]]>
+        </isNotNull> 	
+        	<![CDATA[
+        	 group by t.suserid,t.susername order by  count(*) desc 
+        	     	]]>
+	</select>
+	
+	
+	
+	<select id="getScoreBuy" parameterClass="map" resultMap="Result2">
+	<![CDATA[
+	SELECT * FROM(
+		select rownum as num,a.* from (
+		select suserid, susername, nuserphone ,nallscore, nscoreitemindex, sscoreitemname, nscoreprice, dtime from scorebuy where 1=1 
+			]]>
+		  <isNotNull prepend="and" property="startTime"> 
+		  <![CDATA[
+           dtime > to_date(#startTime#,'mm/dd/yyyy')
+                 		]]>
+        </isNotNull> 	
+        <isNotNull prepend="and" property="endTime"> 
+        	<![CDATA[
+           dtime <=to_date(#endTime#,'mm/dd/yyyy')
+           		]]>
+        </isNotNull> 	
+        	<![CDATA[	
+			 order by DTIME desc) a ) WHERE 1=1
+		]]>
+		<isNotNull property="rowStart">
+			<![CDATA[
+			 and num between #rowStart:INTEGER# 
+			]]>
+		</isNotNull>
+		<isNotNull property="rowEnd">
+			<![CDATA[
+			 and #rowEnd:INTEGER# 
+			]]>
+		</isNotNull>
+	</select>
+	<select id="getScoreBuyCount" parameterClass="map" resultClass="int">
+	<![CDATA[
+			select  count(*) from sharelog where 1=1
+			]]>
+		  <isNotNull prepend="and" property="startTime"> 
+		  <![CDATA[
+           dtime > to_date(#startTime#,'mm/dd/yyyy')
+                 		]]>
+        </isNotNull> 	
+        <isNotNull prepend="and" property="endTime"> 
+        	<![CDATA[
+           dtime <=to_date(#endTime#,'mm/dd/yyyy')
+           		]]>
+        </isNotNull> 	
+	</select>
+	
+	<select id="getGameEnterCount" parameterClass="map" resultClass="int">
+	<![CDATA[
+			select  count(*) from gameenterlog where 1=1
+			]]>
+		  <isNotNull prepend="and" property="startTime"> 
+		  <![CDATA[
+           dtime > to_date(#startTime#,'mm/dd/yyyy')
+                 		]]>
+        </isNotNull> 	
+        <isNotNull prepend="and" property="endTime"> 
+        	<![CDATA[
+           dtime <=to_date(#endTime#,'mm/dd/yyyy')
+           		]]>
+        </isNotNull> 	
+	</select>
+	<select id="getGameEnterCountDistinct" parameterClass="map" resultClass="int">
+	<![CDATA[
+			select  count(distinct(suserid)) from gameenterlog where 1=1
+			]]>
+		  <isNotNull prepend="and" property="startTime"> 
+		  <![CDATA[
+           dtime > to_date(#startTime#,'mm/dd/yyyy')
+                 		]]>
+        </isNotNull> 	
+        <isNotNull prepend="and" property="endTime"> 
+        	<![CDATA[
+           dtime <=to_date(#endTime#,'mm/dd/yyyy')
+           		]]>
+        </isNotNull> 	
+	</select>	
+	<select id="getGameFinishCount" parameterClass="map" resultClass="int">
+	<![CDATA[
+			select  count(*) from gamefinishlog where 1=1
+			]]>
+		  <isNotNull prepend="and" property="startTime"> 
+		  <![CDATA[
+           dtime > to_date(#startTime#,'mm/dd/yyyy')
+                 		]]>
+        </isNotNull> 	
+        <isNotNull prepend="and" property="endTime"> 
+        	<![CDATA[
+           dtime <=to_date(#endTime#,'mm/dd/yyyy')
+           		]]>
+        </isNotNull> 	
+	</select>
+	<select id="getGameFinishCountDistinct" parameterClass="map" resultClass="int">
+	<![CDATA[
+			select  count(distinct(suserid)) from gamefinishlog where 1=1
+			]]>
+		  <isNotNull prepend="and" property="startTime"> 
+		  <![CDATA[
+           dtime > to_date(#startTime#,'mm/dd/yyyy')
+                 		]]>
+        </isNotNull> 	
+        <isNotNull prepend="and" property="endTime"> 
+        	<![CDATA[
+           dtime <=to_date(#endTime#,'mm/dd/yyyy')
+           		]]>
+        </isNotNull> 	
+	</select>		
+	<select id="getCheckIn" parameterClass="map" resultMap="Result3">
+	<![CDATA[
+	SELECT * FROM(
+		select rownum as num,a.* from (
+		select suserid, susername ,nlevel, nscore, nallscore ,dtime  from checkinlog where 1=1 
+			]]>
+		  <isNotNull prepend="and" property="startTime"> 
+		  <![CDATA[
+           dtime > to_date(#startTime#,'mm/dd/yyyy')
+                 		]]>
+        </isNotNull> 	
+        <isNotNull prepend="and" property="endTime"> 
+        	<![CDATA[
+           dtime <=to_date(#endTime#,'mm/dd/yyyy')
+           		]]>
+        </isNotNull> 	
+        	<![CDATA[	
+			 order by DTIME desc) a ) WHERE 1=1
+		]]>
+		<isNotNull property="rowStart">
+			<![CDATA[
+			 and num between #rowStart:INTEGER# 
+			]]>
+		</isNotNull>
+		<isNotNull property="rowEnd">
+			<![CDATA[
+			 and #rowEnd:INTEGER# 
+			]]>
+		</isNotNull>
+	</select>
+	
+	
+	<select id="getCheckInCount" parameterClass="map" resultClass="int">
+	<![CDATA[
+			select  count(*) from checkinlog where 1=1
+			]]>
+		  <isNotNull prepend="and" property="startTime"> 
+		  <![CDATA[
+           dtime > to_date(#startTime#,'mm/dd/yyyy')
+                 		]]>
+        </isNotNull> 	
+        <isNotNull prepend="and" property="endTime"> 
+        	<![CDATA[
+           dtime <=to_date(#endTime#,'mm/dd/yyyy')
+           		]]>
+        </isNotNull> 	
+	</select>
+	
+	
+<select id="getScoreBuySum" parameterClass="map" resultMap="Result5">
+	<![CDATA[
+	select count(*) as num,nscoreitemindex,sscoreitemname,nscoreprice,sum(nscoreprice) as buysum from scorebuy t  where 1=1
+
+			]]>
+		  <isNotNull prepend="and" property="startTime"> 
+		  <![CDATA[
+           dtime > to_date(#startTime#,'mm/dd/yyyy')
+                 		]]>
+        </isNotNull> 	
+        <isNotNull prepend="and" property="endTime"> 
+        	<![CDATA[
+           dtime <=to_date(#endTime#,'mm/dd/yyyy')
+           		]]>
+        </isNotNull> 	
+        	<![CDATA[
+        	group by t.nscoreitemindex,t.sscoreitemname,t.nscoreprice order by sum(t.nscoreprice) desc
+        	     	]]>
+	</select>
+	
+	
+	<select id="login" parameterClass="map" resultMap="Result6">
+	<![CDATA[
+			select susername,spassword,ngroup,ssid from accounts where susername=#userName# 
+			]]>
+	
+	</select>
+	
+	
+	<select id="getReg_num" parameterClass="map" resultClass="Integer">
+	<![CDATA[
+			select  NNUM from ydw_regnum where 1=1
+			]]>
+		  <isNotNull prepend="and" property="startTime"> 
+		  <![CDATA[
+           dtime = to_date(#startTime#,'mm/dd/yyyy')
+                 		]]>
+        </isNotNull> 	
+    
+	</select>
+	
+	<select id="getReg_numAll" parameterClass="map" resultClass="Integer">
+	<![CDATA[
+			select  sum(NNUM) from ydw_regnum where 1=1
+			]]>
+		  <isNotNull prepend="and" property="startTime"> 
+		  <![CDATA[
+           dtime <=to_date(#startTime#,'mm/dd/yyyy')
+                 		]]>
+        </isNotNull> 	
+	
+	</select>
+	
+	<insert id="insertReg_num" parameterClass="map">
+		<![CDATA[
+		insert into ydw_regnum(nnum ,dtime ) 
+			values(#nnum#,to_date(#dtime#,'mm/dd/yyyy'))
+		]]>
+	</insert>
+	
+	
+	<select id="queryYDUser" parameterClass="map" resultMap="Result7">
+	<![CDATA[
+	SELECT * FROM(
+		select rownum as num,a.* from (
+			select  snickname,nusername ,dregisterdate from h5_new_user where 1=1
+			]]>
+		   <isNotNull prepend="and" property="nick"> 
+		  <![CDATA[
+           snickname=#nick#
+                 		]]>
+        </isNotNull> 	
+	  <isNotNull prepend="and" property="userName"> 
+		  <![CDATA[
+           nusername =#userName#
+           	]]>
+        </isNotNull> 	
+        	<![CDATA[	
+			 ) a ) WHERE 1=1
+		]]>
+		<isNotNull property="rowStart">
+			<![CDATA[
+			 and num between #rowStart:INTEGER# 
+			]]>
+		</isNotNull>
+		<isNotNull property="rowEnd">
+			<![CDATA[
+			 and #rowEnd:INTEGER# 
+			]]>
+		</isNotNull>
+	</select>
+	
+	
+	<select id="queryYDUserCount" parameterClass="map" resultClass="int">
+	<![CDATA[
+			select  count(*) from h5_new_user where 1=1
+			]]>
+		   <isNotNull prepend="and" property="nick"> 
+		  <![CDATA[
+           snickname=#nick#
+                 		]]>
+        </isNotNull> 	
+	  <isNotNull prepend="and" property="userName"> 
+		  <![CDATA[
+           nusername =#userName#
+           	]]>
+        </isNotNull> 	
+	</select>
+	
+	
+	<insert id="insertLiuCun" parameterClass="map">
+		<![CDATA[
+		insert into ydw_LIUCUN(NL1,NL3,NL7,NL30,DTIME ) 
+			values(#L1#,#L3#,#L7#,#L30#,#dtime#)
+		]]>
+	</insert>
+
+
+	<select id="getLiucun" parameterClass="map" resultMap="Result8">
+	<![CDATA[
+			select  NL1,NL3,NL7,NL30 from ydw_LIUCUN where 1=1
+			]]>
+		  <isNotNull prepend="and" property="startTime"> 
+		  <![CDATA[
+           dtime= to_date(#startTime#,'mm/dd/yyyy')
+                 		]]>
+        </isNotNull> 	
+	
+	</select>
+</sqlMap>	

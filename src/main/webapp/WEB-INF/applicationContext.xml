@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+	<bean id="baseDao" abstract="true">
+		<property name="sqlMapClient" ref="sqlMapClient" />
+	</bean>
+
+	<bean id="h5baseDao" abstract="true">
+		<property name="sqlMapClient" ref="h5sqlMapClient" />
+	</bean>
+
+	<bean id="yiDianDao" class="daoImpl.YiDianDaoImpl" parent="baseDao" />
+	<bean id="payDao" class="daoImpl.PayDaoImpl" parent="h5baseDao" />
+
+	<bean id="TestAction" class="action.TestAction" scope="request">
+		<property name="yiDianDao" ref="yiDianDao" />
+		<property name="payDao" ref="payDao" />
+	</bean>
+
+</beans>

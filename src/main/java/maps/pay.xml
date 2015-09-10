@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="AdminSQL">
+	<typeAlias alias="pay" type="model.Pay" />
+	<typeAlias alias="payManage" type="model.PayManage" />
+	<resultMap class="pay" id="Result7">
+		<result column="userid" property="userId" jdbcType="VARCHAR"
+			nullValue="" />
+		<result column="state" property="state" jdbcType="DECIMAL"
+			nullValue="0" />
+		<result column="amt" property="amt" jdbcType="DECIMAL"
+			nullValue="0" />
+		<result column="ddate" property="time" jdbcType="VARCHAR"
+			nullValue="" />
+	</resultMap>
+	<resultMap class="payManage" id="Result8">
+		<result column="dtime" property="dtime" jdbcType="VARCHAR"
+			nullValue="" />
+		<result column="amt" property="amt" jdbcType="DECIMAL"
+			nullValue="0" />
+	</resultMap>
+
+	<select id="getPay" parameterClass="map" resultMap="Result7">
+	<![CDATA[
+	SELECT * FROM(
+		select rownum as num,a.* from (
+			select  userid,state ,amt/100 as amt,ddate from h5_payreqinfo where 1=1 and state=1
+			]]>
+		<isNotNull prepend="and" property="startTime"> 
+		  <![CDATA[
+           ddate > to_date(#startTime#,'mm/dd/yyyy')
+                 		]]>
+		</isNotNull>
+		<isNotNull prepend="and" property="endTime"> 
+        	<![CDATA[
+           ddate <=to_date(#endTime#,'mm/dd/yyyy')
+           		]]>
+		</isNotNull>
+		<isNotNull prepend="and" property="sid"> 
+        	<![CDATA[
+           spid =#sid#
+           		]]>
+		</isNotNull> 	
+        
+        	<![CDATA[	
+			 ) a ) WHERE 1=1
+		]]>
+		<isNotNull property="rowStart">
+			<![CDATA[
+			 and num between #rowStart:INTEGER# 
+			]]>
+		</isNotNull>
+		<isNotNull property="rowEnd">
+			<![CDATA[
+			 and #rowEnd:INTEGER# 
+			]]>
+		</isNotNull>
+	</select>
+
+
+	<select id="getPayCount" parameterClass="map" resultClass="int">
+	<![CDATA[
+			select  count(*) from h5_payreqinfo where 1=1 and state=1
+			]]>
+		<isNotNull prepend="and" property="startTime"> 
+		  <![CDATA[
+           ddate > to_date(#startTime#,'mm/dd/yyyy')
+                 		]]>
+		</isNotNull>
+		<isNotNull prepend="and" property="endTime"> 
+        	<![CDATA[
+           ddate <=to_date(#endTime#,'mm/dd/yyyy')
+           		]]>
+		</isNotNull>
+		<isNotNull prepend="and" property="sid"> 
+        	<![CDATA[
+           spid =#sid#
+           		]]>
+		</isNotNull>
+	</select>
+
+	<select id="getPayManage" parameterClass="map" resultMap="Result8">
+	<![CDATA[
+	SELECT * FROM(
+		select rownum as num,a.* from (
+			select  sum(amt/100) as amt,to_char(ddate,'mm/dd/yyyy')  as dtime from h5_payreqinfo where 1=1 and state=1 
+			]]>
+		<isNotNull prepend="and" property="startTime"> 
+		  <![CDATA[
+           ddate > to_date(#startTime#,'mm/dd/yyyy')
+                 		]]>
+		</isNotNull>
+		<isNotNull prepend="and" property="endTime"> 
+        	<![CDATA[
+           ddate <=to_date(#endTime#,'mm/dd/yyyy')
+           		]]>
+		</isNotNull>
+		<isNotNull prepend="and" property="sid"> 
+        	<![CDATA[
+           spid =#sid#
+           		]]>
+		</isNotNull> 	
+        
+        	<![CDATA[	
+		group by to_char(ddate,'mm/dd/yyyy')	 order by  to_char(ddate,'mm/dd/yyyy')	 desc	 ) a ) WHERE 1=1  
+		]]>
+		<isNotNull property="rowStart">
+			<![CDATA[
+			 and num between #rowStart:INTEGER# 
+			]]>
+		</isNotNull>
+		<isNotNull property="rowEnd">
+			<![CDATA[
+			 and #rowEnd:INTEGER# 
+			]]>
+		</isNotNull>
+	</select>
+
+
+
+</sqlMap>	
